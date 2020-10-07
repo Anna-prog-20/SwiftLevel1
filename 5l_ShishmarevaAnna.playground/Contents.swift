@@ -65,9 +65,7 @@ extension CarProtocol {
             }
             return action
         }
-}
-
-extension CarProtocol {
+    
     mutating func setFilledCargoValume(action:Action, valume:Double) {
             if valume >= 0 && cargoValume != 0 {
                 switch action {
@@ -138,22 +136,17 @@ struct Spoiler {
 
 class SportCar: CarProtocol {
     var model: String
-    var yearManufacture: Int = 1900
-    var cargoValume: Double = 0
-    var engineCondition: EngineCondition = .stop
-    var windowCondition: WindowCondition = .close
-    var filledCargoValume: Double = 0
+    var yearManufacture: Int
+    var cargoValume: Double
+    var engineCondition: EngineCondition
+    var windowCondition: WindowCondition
+    var filledCargoValume: Double
     
-    var spoiler: Spoiler = Spoiler(exist: .not)
+    var spoiler: Spoiler
     static var countSportCar = 0
     
-    init(model: String){
-        self.model = model
-        SportCar.countSportCar += 1
-    }
-    
-    init?(model: String, yearManufacture: Int, cargoValume: Double, engineCondition: EngineCondition, windowCondition: WindowCondition, filledCargoValume: Double, spoiler: Spoiler) {
-        guard yearManufacture > 0 && cargoValume > 0 else { return nil }
+    init?(model: String, yearManufacture: Int = 1900, cargoValume: Double = 0, engineCondition: EngineCondition = .stop, windowCondition: WindowCondition = .close, filledCargoValume: Double = 0, spoiler: Spoiler = Spoiler(exist: ExistSpoiler.not)) {
+        guard yearManufacture > 0 && cargoValume >= 0 else { return nil }
         self.model = model
         self.yearManufacture = yearManufacture
         self.cargoValume = cargoValume
@@ -161,21 +154,6 @@ class SportCar: CarProtocol {
         self.windowCondition = windowCondition
         self.filledCargoValume = filledCargoValume
         self.spoiler = spoiler
-        SportCar.countSportCar += 1
-    }
-    
-    init?(model: String, cargoValume: Double) {
-        guard cargoValume > 0 else { return nil }
-        self.model = model
-        self.cargoValume = cargoValume
-        SportCar.countSportCar += 1
-    }
-    
-    init?(model: String, yearManufacture: Int, cargoValume: Double) {
-        guard yearManufacture > 0 && cargoValume > 0 else { return nil }
-        self.model = model
-        self.yearManufacture = yearManufacture
-        self.cargoValume = cargoValume
         SportCar.countSportCar += 1
     }
     
@@ -251,12 +229,12 @@ extension SportCar: CustomStringConvertible {
 }
 
 class TrunkCar: CarProtocol {
-    var model: String = ""
-    var yearManufacture: Int = 1900
-    var cargoValume: Double = 0
-    var engineCondition: EngineCondition = .stop
-    var windowCondition: WindowCondition = .close
-    var filledCargoValume: Double = 0
+    var model: String
+    var yearManufacture: Int
+    var cargoValume: Double
+    var engineCondition: EngineCondition
+    var windowCondition: WindowCondition
+    var filledCargoValume: Double
     
     var trailerValume: Double = 0
     static var countTrunkCar = 0
@@ -268,34 +246,14 @@ class TrunkCar: CarProtocol {
         print("Теперь грузовик может загрузить \(cargoValume) единиц")
     }
     
-    init(model: String){
-        self.model = model
-        TrunkCar.countTrunkCar += 1
-    }
-    
-    init?(model: String, yearManufacture: Int, cargoValume: Double, engineCondition: EngineCondition, windowCondition: WindowCondition, filledCargoValume: Double) {
-        guard yearManufacture > 0 && cargoValume > 0 else { return nil }
+    init?(model: String, yearManufacture: Int = 1900, cargoValume: Double = 0, engineCondition: EngineCondition = .stop, windowCondition: WindowCondition = .close, filledCargoValume: Double = 0) {
+        guard yearManufacture > 0 && cargoValume >= 0 else { return nil }
         self.model = model
         self.yearManufacture = yearManufacture
         self.cargoValume = cargoValume
         self.engineCondition = engineCondition
         self.windowCondition = windowCondition
         self.filledCargoValume = filledCargoValume
-        TrunkCar.countTrunkCar += 1
-    }
-    
-    init?(model: String, cargoValume: Double) {
-        guard cargoValume > 0 else { return nil }
-        self.model = model
-        self.cargoValume = cargoValume
-        TrunkCar.countTrunkCar += 1
-    }
-    
-    init?(model: String, yearManufacture: Int, cargoValume: Double) {
-        guard yearManufacture > 0 && cargoValume > 0 else { return nil }
-        self.model = model
-        self.yearManufacture = yearManufacture
-        self.cargoValume = cargoValume
         TrunkCar.countTrunkCar += 1
     }
     
@@ -394,18 +352,38 @@ if let a = TrunkCar(model: "Камаз", yearManufacture: 2000, cargoValume: 200
     trunkCar3.setFilledCargoValume(action: .load, valume: 10)
 }
 
-trunkCar4 = TrunkCar(model: "Просто грузовик без кузова")
-print(trunkCar4)
-trunkCar4.setEnergineCondition(engineCondition: .start)
-trunkCar4.setWindowCondition(windowCondition: .open)
-trunkCar4.setFilledCargoValume(action: .load, valume: 50)
-trunkCar4.addTrailer(trailerValume: 50)
-trunkCar4.setFilledCargoValume(action: .unload, valume: 20)
+if let a = TrunkCar(model: "Просто грузовик без кузова") {
+    trunkCar4 = a
+    print(trunkCar4)
+    trunkCar4.setEnergineCondition(engineCondition: .start)
+    trunkCar4.setWindowCondition(windowCondition: .open)
+    trunkCar4.setFilledCargoValume(action: .load, valume: 50)
+    trunkCar4.addTrailer(trailerValume: 50)
+    trunkCar4.setFilledCargoValume(action: .unload, valume: 20)
+}
 
 SportCar.countSportCarInfo()
 TrunkCar.countTrunkCarInfo()
 
 //Это просто эксперемент для себя :)))
-let car = [SportCar(model: "sdfsf"), TrunkCar(model: "sdbdbakksb")] as [CarProtocol]
-print(car[0])
-print(car[1])
+var car: [CarProtocol?] = []
+if let a = SportCar(model: "Avto1") {
+    car.append(a)
+}
+if let a = TrunkCar(model: "TrunkCar1") {
+    car.append(a)
+}
+
+for i in 0...car.count-1 {
+    print(car[i]!)
+}
+
+for i in 0...car.count-1 {
+    car[i]?.setWindowCondition(windowCondition: WindowCondition.open)
+    car[i]?.setEnergineCondition(engineCondition: EngineCondition.start)
+}
+
+print("После изменений")
+for i in 0...car.count-1 {
+    print(car[i]!)
+}
